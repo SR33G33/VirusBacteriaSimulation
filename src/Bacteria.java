@@ -7,10 +7,10 @@ public class Bacteria extends Organism implements Serializable {
 
     public Bacteria(boolean randomAge) {
         super();
-        BREEDING_AGE = 5;
-        MAX_AGE = 30;
-        BREEDING_PROBABILITY = 0.99;
-        MAX_LITTER_SIZE = 5;
+        BREEDING_AGE = 0;
+        MAX_AGE = 10;
+        BREEDING_PROBABILITY = 1.00;
+        MAX_LITTER_SIZE = 1;
         rand = new Random();
 
         age = 0;
