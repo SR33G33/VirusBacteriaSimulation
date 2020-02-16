@@ -2,7 +2,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
 
-public class Mouse extends Animal implements Serializable {
+public class Mouse extends Organism implements Serializable {
 
 	public Mouse(boolean randomAge) {
 		super();
@@ -19,7 +19,7 @@ public class Mouse extends Animal implements Serializable {
 		}
 	}
 
-	public void act(Field currentField, Field updatedField, List<Animal> newMice) {
+	public void act(Field currentField, Field updatedField, List<Organism> newMice) {
 		incrementAge();
 		if (alive) {
 			int births = breed();

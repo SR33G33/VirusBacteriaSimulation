@@ -9,7 +9,7 @@ import java.util.Random;
  *         2007-2013
  * @version 2006.03.30
  */
-public class Rabbit extends Animal implements Serializable {
+public class Rabbit extends Organism implements Serializable {
 
 	public Rabbit(boolean randomAge) {
 		super();
@@ -27,7 +27,7 @@ public class Rabbit extends Animal implements Serializable {
 	}
 
 	
-	public void act(Field currentField, Field updatedField, List<Animal> newRabbits) {
+	public void act(Field currentField, Field updatedField, List<Organism> newRabbits) {
 		incrementAge();
 		if (alive) {
 			int births = breed();

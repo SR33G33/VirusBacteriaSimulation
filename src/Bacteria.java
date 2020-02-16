@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.Random;
 
 
-public class Bacteria extends Animal implements Serializable {
+public class Bacteria extends Organism implements Serializable {
 
     public Bacteria(boolean randomAge) {
         super();
@@ -21,7 +21,7 @@ public class Bacteria extends Animal implements Serializable {
     }
 
 
-    public void act(Field currentField, Field updatedField, List<Animal> newRabbits) {
+    public void act(Field currentField, Field updatedField, List<Organism> newRabbits) {
         incrementAge();
         if (alive) {
             int births = breed();

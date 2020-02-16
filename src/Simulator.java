@@ -1,9 +1,7 @@
 import java.util.Random;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Collections;
-import java.awt.Color;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -39,7 +37,7 @@ public class Simulator {
 
 	// Lists of animals in the field. Separate lists are kept for ease of
 	// iteration.
-	List<Animal> animals;
+	List<Organism> animals;
 
 	// The current state of the field.
 	private Field field;
@@ -83,7 +81,7 @@ public class Simulator {
 			width = DEFAULT_WIDTH;
 		}
 
-		animals = new ArrayList<Animal>();
+		animals = new ArrayList<Organism>();
 		field = new Field(width, height);
 		updatedField = new Field(width, height);
 		stats = new FieldStats();
@@ -148,11 +146,11 @@ public class Simulator {
 		step++;
 
 		// New List to hold newborn rabbits.
-		List<Animal> newAnimals = new ArrayList<Animal>();
+		List<Organism> newAnimals = new ArrayList<Organism>();
 
 		// Loop through all Rabbits. Let each run around.
 		for (int i = 0; i < animals.size(); i++) {
-			Animal animal = animals.get(i);
+			Organism animal = animals.get(i);
 			animal.act(field, updatedField, newAnimals);
 			if (!animal.isAlive()) {
 				animals.remove(i);
@@ -288,7 +286,7 @@ public class Simulator {
 		field = field2;
 	}
 
-	private void setAnimals(List<Animal> animals2) {
+	private void setAnimals(List<Organism> animals2) {
 		animals = animals2;
 	}
 

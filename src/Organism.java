@@ -1,7 +1,7 @@
 import java.util.List;
 import java.util.Random;
 
-public abstract class Animal {
+public abstract class Organism {
 
 	protected int age;
 	protected boolean alive;
@@ -13,12 +13,12 @@ public abstract class Animal {
 	protected Random rand = new Random();
 
 	
-	public Animal() {
+	public Organism() {
 		age = 0;
 		alive = true;
 	}
 
-	public abstract void act(Field currentField, Field updatedField, List<Animal> babies);
+	public abstract void act(Field currentField, Field updatedField, List<Organism> babies);
 		
 	
 	public void incrementAge() {

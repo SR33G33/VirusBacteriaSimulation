@@ -1,9 +1,8 @@
 import java.io.Serializable;
 import java.util.List;
-import java.util.Iterator;
 import java.util.Random;
 
-public class Bear extends Animal implements Serializable {
+public class Bear extends Organism implements Serializable {
 
 	private int RABBIT_FOOD_VALUE = 10;
 	private int FOX_FOOD_VALUE = 10;
@@ -30,7 +29,7 @@ public class Bear extends Animal implements Serializable {
 		}
 	}
 
-	public void act(Field currentField, Field updatedField, List<Animal> newBears) {
+	public void act(Field currentField, Field updatedField, List<Organism> newBears) {
 		incrementAge();
 		incrementHunger();
 		if (alive) {
