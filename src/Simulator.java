@@ -25,7 +25,7 @@ public class Simulator {
     private static final int DEFAULT_HEIGHT = 80;
 
     private static final double ANTIBIOTIC_CREATION_PROBABILITY = 0.01;
-    private static final double BACTERIA_CREATION_PROBABILITY = 0.1;
+    private static final double BACTERIA_CREATION_PROBABILITY = 0.001;
 
 
     // Lists of animals in the field. Separate lists are kept for ease of
@@ -89,7 +89,7 @@ public class Simulator {
         // Create a view of the state of each location in the field.
         view = new FieldDisplay(p, this.field, x, y, display_width, display_height);
         view.setColor(Bacteria.class, p.color(0, 255, 0));
-		view.setColor(Antibiotic.class, p.color(155, 200, 255));
+		view.setColor(Antibiotic.class, p.color(155, 150, 255));
 
 
 
@@ -99,7 +99,7 @@ public class Simulator {
         graph.xlabel = "Time";
         graph.ylabel = "Pop.\t\t";
         graph.setColor(Bacteria.class, p.color(0, 255, 0));
-		graph.setColor(Antibiotic.class, p.color(155, 200, 255));
+		graph.setColor(Antibiotic.class, p.color(155, 150, 255));
 
 
 
@@ -196,7 +196,8 @@ public class Simulator {
                     antibiotic.setLocation(col, row);
                     organisms.add(antibiotic);
                     field.put(antibiotic, col, row);
-                } else if (rand.nextDouble() <= BACTERIA_CREATION_PROBABILITY) {
+                }
+                else if (rand.nextDouble() <= BACTERIA_CREATION_PROBABILITY) {
                     Bacteria bacteria = new Bacteria(true, false);
                     bacteria.setLocation(col, row);
                     organisms.add(bacteria);

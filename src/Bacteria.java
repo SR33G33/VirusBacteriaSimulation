@@ -10,9 +10,9 @@ public class Bacteria extends Organism implements Serializable {
     public Bacteria(boolean randomAge, boolean isResistant) {
         super();
         BREEDING_AGE = 0;
-        MAX_AGE = 87600;
-        BREEDING_PROBABILITY = 1;
-        LITTER_SIZE = 3;
+        MAX_AGE = 5;
+        BREEDING_PROBABILITY = 0.3;
+        LITTER_SIZE = 1;
         rand = new Random();
         this.isResistant = isResistant;
 
@@ -30,7 +30,7 @@ public class Bacteria extends Organism implements Serializable {
             int births = breed();
             for (int b = 0; b < births; b++) {
                 if (Main.hoursPassed > 2000 && (int) (Math.random() * 100) < 1) {
-                    Bacteria newBacteria = new Bacteria(false, false);
+                    Bacteria newBacteria = new Bacteria(false, true);
                 }
                 Bacteria newBacteria = new Bacteria(false, false);
                 newBacterium.add(newBacteria);

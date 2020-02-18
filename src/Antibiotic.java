@@ -46,7 +46,6 @@ public class Antibiotic extends Organism implements Serializable {
             } else {
                 // can neither move nor stay - overcrowding - all locations
                 // taken
-                alive = false;
             }
         }
     }
