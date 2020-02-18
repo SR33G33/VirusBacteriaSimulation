@@ -4,10 +4,12 @@ public class Main extends PApplet {
 	Simulator simulator;
 	String saveFilePath = "c:\\data\\foxesAndRabbitsSaved.txt";
 	boolean paused = true;
+	public static int hoursPassed = 0;
 
 	@Override
 	public void setup() {
 		size(640, 550);
+
 
 		this.simulator = new Simulator(80, 60);
 		this.simulator.setGUI(this);
@@ -16,8 +18,12 @@ public class Main extends PApplet {
 	@Override
 	public void draw() {
 		background(200);
-		if (!paused)
+		if (!paused) {
 			simulator.simulateOneStep();
+			hoursPassed++;
+			System.out.println(hoursPassed);
+
+		}
 		simulator.drawField();
 		simulator.drawGraph();
 	}

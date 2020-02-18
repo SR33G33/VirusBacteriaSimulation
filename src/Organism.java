@@ -9,7 +9,7 @@ public abstract class Organism {
 	protected int BREEDING_AGE;
 	protected int MAX_AGE;
 	protected double BREEDING_PROBABILITY;
-	protected int MAX_LITTER_SIZE;
+	protected int LITTER_SIZE;
 	protected Random rand = new Random();
 
 	
@@ -31,7 +31,7 @@ public abstract class Organism {
 	public int breed() {
 		int births = 0;
 		if (canBreed() && rand.nextDouble() <= BREEDING_PROBABILITY) {
-			births = rand.nextInt(MAX_LITTER_SIZE) + 1;
+			births = LITTER_SIZE;
 		}
 		return births;
 	}

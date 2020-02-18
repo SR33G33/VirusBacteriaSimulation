@@ -5,41 +5,35 @@ import java.util.Random;
 public class Antibiotic extends Organism implements Serializable {
 
 
-    private int BACTERIA_FOOD_VALUE;
-    private int foodLevel;
-
     public Antibiotic(boolean randomAge) {
         super();
-        BREEDING_AGE = 3;
-        BREEDING_PROBABILITY = 0.00;
-        MAX_LITTER_SIZE = 0;
-        BACTERIA_FOOD_VALUE = 1;
+        BREEDING_AGE = 0;
+        MAX_AGE = Integer.MAX_VALUE;
+        BREEDING_PROBABILITY = 0;
+        LITTER_SIZE = 0;
 
         rand = new Random();
 
         age = 0;
         alive = true;
         if (randomAge) {
-            foodLevel = rand.nextInt(BACTERIA_FOOD_VALUE);
+            age = rand.nextInt(MAX_AGE);
         } else {
             // leave age at 0
-            foodLevel = BACTERIA_FOOD_VALUE;
         }
     }
 
     public void act(Field currentField, Field updatedField, List<Organism> newFoxes) {
         incrementAge();
-        incrementHunger();
         if (alive) {
             // New foxes are born into adjacent locations.
             int births = breed();
             for (int b = 0; b < births; b++) {
-                Fox newFox = new Fox(false);
-                newFox.setFoodLevel(this.foodLevel);
-                newFoxes.add(newFox);
+                Antibiotic newAntibiotic = new Antibiotic(false);
+                newFoxes.add(newAntibiotic);
                 Location loc = updatedField.randomAdjacentLocation(location);
-                newFox.setLocation(loc);
-                updatedField.put(newFox, loc);
+                newAntibiotic.setLocation(loc);
+                updatedField.put(newAntibiotic, loc);
             }
             // Move towards the source of food if found.
             Location newLocation = findFood(currentField, location);
@@ -57,42 +51,22 @@ public class Antibiotic extends Organism implements Serializable {
         }
     }
 
-    private void incrementHunger() {
-        foodLevel--;
-        if (foodLevel <= 0) {
-            alive = false;
-        }
-    }
-
     private Location findFood(Field field, Location location) {
         List<Location> adjacentLocations = field.adjacentLocations(location);
 
         for (Location where : adjacentLocations) {
             Object animal = field.getObjectAt(where);
-            if (animal instanceof Rabbit) {
-                Rabbit rabbit = (Rabbit) animal;
-                if (rabbit.isAlive()) {
-                    rabbit.setEaten();
-                    foodLevel = BACTERIA_FOOD_VALUE;
+            if (animal instanceof Bacteria) {
+                Bacteria bacteria = (Bacteria) animal;
+                if (bacteria.isAlive() && bacteria.isResistant == false) {
+                    bacteria.setEaten();
                     return where;
                 }
             }
-
-            if (animal instanceof Mouse) {
-                Mouse mouse = (Mouse) animal;
-                if (mouse.isAlive()) {
-                    mouse.setEaten();
-                    foodLevel = BACTERIA_FOOD_VALUE;
-                    return where;
-                }
-            }
-
         }
 
         return null;
     }
 
-    public void setFoodLevel(int fl) {
-        this.foodLevel = fl;
-    }
+
 }

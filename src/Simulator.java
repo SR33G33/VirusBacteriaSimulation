@@ -12,325 +12,300 @@ import processing.core.PApplet;
 /**
  * A simple predator-prey simulator, based on a field containing rabbits and
  * foxes.
- * 
+ *
  * @author David J. Barnes and Michael Kolling. Modified by David Dobervich
- *         2007-2013.
+ * 2007-2013.
  * @version 2006.03.30
- * 
  */
 public class Simulator {
-	// The default width for the grid.
-	private static final int DEFAULT_WIDTH = 80;
+    // The default width for the grid.
+    private static final int DEFAULT_WIDTH = 80;
 
-	// The default height of the grid.
-	private static final int DEFAULT_HEIGHT = 80;
+    // The default height of the grid.
+    private static final int DEFAULT_HEIGHT = 80;
 
-	// The probability that a fox will be created in any given grid position.
-	private static final double FOX_CREATION_PROBABILITY = 0.02;
-
-	// The probability that a rabbit will be created in any given grid position.
-	private static final double RABBIT_CREATION_PROBABILITY = 0.08;
-
-	private static final double BEAR_CREATION_PROBABILITY = 0.02;
-	private static final double MOUSE_CREATION_PROBABILITY = 0.08;
+    private static final double ANTIBIOTIC_CREATION_PROBABILITY = 0.01;
+    private static final double BACTERIA_CREATION_PROBABILITY = 0.1;
 
 
-	// Lists of animals in the field. Separate lists are kept for ease of
-	// iteration.
-	List<Organism> animals;
+    // Lists of animals in the field. Separate lists are kept for ease of
+    // iteration.
+    List<Organism> organisms;
 
-	// The current state of the field.
-	private Field field;
+    // The current state of the field.
+    private Field field;
 
-	// A second field, used to build the next stage of the simulation.
-	private Field updatedField;
+    // A second field, used to build the next stage of the simulation.
+    private Field updatedField;
 
-	// The current step of the simulation.
-	private int step;
+    // The current step of the simulation.
+    private int step;
 
-	// A graphical view of the simulation.
-	private FieldDisplay view;
+    // A graphical view of the simulation.
+    private FieldDisplay view;
 
-	// A graph of animal populations over time
-	private Graph graph;
+    // A graph of animal populations over time
+    private Graph graph;
 
-	// Processing Applet (the graphics window we draw to)
-	private PApplet graphicsWindow;
+    // Processing Applet (the graphics window we draw to)
+    private PApplet graphicsWindow;
 
-	// Object to keep track of statistics of animal populations
-	private FieldStats stats;
+    // Object to keep track of statistics of animal populations
+    private FieldStats stats;
 
-	/**
-	 * Construct a simulation field with default size.
-	 */
-	public Simulator() {
-		this(DEFAULT_HEIGHT, DEFAULT_WIDTH);
-	}
+    /**
+     * Construct a simulation field with default size.
+     */
+    public Simulator() {
+        this(DEFAULT_HEIGHT, DEFAULT_WIDTH);
+    }
 
-	/**
-	 * Create a simulation field with the given size.
-	 * 
-	 * @param depth Depth of the field. Must be greater than zero.
-	 * @param width Width of the field. Must be greater than zero.
-	 **/
-	public Simulator(int width, int height) {
-		if (width <= 0 || height <= 0) {
-			System.out.println("The dimensions must be greater than zero.");
-			System.out.println("Using default values.");
-			height = DEFAULT_HEIGHT;
-			width = DEFAULT_WIDTH;
-		}
+    /**
+     * Create a simulation field with the given size.
+     *
+     * @param height Depth of the field. Must be greater than zero.
+     * @param width  Width of the field. Must be greater than zero.
+     **/
+    public Simulator(int width, int height) {
+        if (width <= 0 || height <= 0) {
+            System.out.println("The dimensions must be greater than zero.");
+            System.out.println("Using default values.");
+            height = DEFAULT_HEIGHT;
+            width = DEFAULT_WIDTH;
+        }
 
-		animals = new ArrayList<Organism>();
-		field = new Field(width, height);
-		updatedField = new Field(width, height);
-		stats = new FieldStats();
+        organisms = new ArrayList<Organism>();
+        field = new Field(width, height);
+        updatedField = new Field(width, height);
+        stats = new FieldStats();
 
-		// Setup a valid starting point.
-		reset();
-	}
+        // Setup a valid starting point.
+        reset();
+    }
 
-	public void setGUI(PApplet p, int x, int y, int display_width, int display_height) {
-		this.graphicsWindow = p;
+    public void setGUI(PApplet p, int x, int y, int display_width, int display_height) {
+        this.graphicsWindow = p;
 
-		// Create a view of the state of each location in the field.
-		view = new FieldDisplay(p, this.field, x, y, display_width, display_height);
-		view.setColor(Rabbit.class, p.color(175, 175, 175));
-		view.setColor(Fox.class, p.color(225, 110, 35));
-		view.setColor(Bear.class, p.color(125, 80, 40));
-		view.setColor(Mouse.class, p.color(200, 175, 138));
+        // Create a view of the state of each location in the field.
+        view = new FieldDisplay(p, this.field, x, y, display_width, display_height);
+        view.setColor(Bacteria.class, p.color(0, 255, 0));
+		view.setColor(Antibiotic.class, p.color(155, 200, 255));
 
-		
+
+
 		graph = new Graph(p, 100, p.height - 30, p.width - 50, p.height - 110, 0, 0, 500,
-				field.getHeight() * field.getWidth());
-		graph.title = "Fox, Rabbit, and Bear Populations";
-		graph.xlabel = "Time";
-		graph.ylabel = "Pop.\t\t";
-		graph.setColor(Rabbit.class, p.color(175, 175, 175));
-		graph.setColor(Fox.class, p.color(225, 110, 35));
-		graph.setColor(Bear.class, p.color(125, 80, 40));
-		graph.setColor(Mouse.class, p.color(200, 175, 138));
+                field.getHeight() * field.getWidth());
+        graph.title = "Bacteria Populations";
+        graph.xlabel = "Time";
+        graph.ylabel = "Pop.\t\t";
+        graph.setColor(Bacteria.class, p.color(0, 255, 0));
+		graph.setColor(Antibiotic.class, p.color(155, 200, 255));
 
 
-	}
-
-	public void setGUI(PApplet p) {
-		setGUI(p, 10, 10, p.width - 10, 400);
-	}
-
-	/**
-	 * Run the simulation from its current state for a reasonably long period, e.g.
-	 * 500 steps.
-	 */
-	public void runLongSimulation() {
-		simulate(500);
-	}
-
-	/**
-	 * Run the simulation from its current state for the given number of steps. Stop
-	 * before the given number of steps if it ceases to be viable.
-	 * 
-	 * @param numSteps The number of steps to run for.
-	 */
-	public void simulate(int numSteps) {
-		for (int step = 1; step <= numSteps && isViable(); step++) {
-			simulateOneStep();
-		}
-	}
-
-	/**
-	 * Run the simulation from its current state for a single step. Iterate over the
-	 * whole field updating the state of each fox and rabbit.
-	 */
-	public void simulateOneStep() {
-		step++;
-
-		// New List to hold newborn rabbits.
-		List<Organism> newAnimals = new ArrayList<Organism>();
-
-		// Loop through all Rabbits. Let each run around.
-		for (int i = 0; i < animals.size(); i++) {
-			Organism animal = animals.get(i);
-			animal.act(field, updatedField, newAnimals);
-			if (!animal.isAlive()) {
-				animals.remove(i);
-				i--;
-			}
-		}
-
-		animals.addAll(newAnimals);
-
-		Field temp = field;
-		field = updatedField;
-		updatedField = temp;
-		updatedField.clear();
-
-		stats.generateCounts(field);
-		updateGraph();
-	}
-
-	public void updateGraph() {
-		Counter count;
-		for (Counter c : stats.getCounts()) {
-			graph.plotPoint(step, c.getCount(), c.getClassName());
-		}
-	}
-
-	public void reset() {
-		step = 0;
-		animals.clear();
-		field.clear();
-		updatedField.clear();
-		initializeBoard(field);
-
-		if (graph != null)
-			graph.clear();
-
-		// Show the starting state in the view.
-		// view.showStatus(step, field);
-	}
-
-	/**
-	 * Populate a field with foxes and rabbits.
-	 * 
-	 * @param field The field to be populated.
-	 */
-	private void initializeBoard(Field field) {
-		Random rand = new Random();
-		field.clear();
-		for (int row = 0; row < field.getHeight(); row++) {
-			for (int col = 0; col < field.getWidth(); col++) {
-				if (rand.nextDouble() <= FOX_CREATION_PROBABILITY) {
-					Fox fox = new Fox(true);
-					fox.setLocation(col, row);
-					animals.add(fox);
-					field.put(fox, col, row);
-				} else if (rand.nextDouble() <= RABBIT_CREATION_PROBABILITY) {
-					Rabbit rabbit = new Rabbit(true);
-					rabbit.setLocation(col, row);
-					animals.add(rabbit);
-
-					field.put(rabbit, col, row);
-				} else if (rand.nextDouble() <= BEAR_CREATION_PROBABILITY) {
-					Bear bear = new Bear(true);
-					bear.setLocation(col, row);
-					animals.add(bear);
-
-					field.put(bear, col, row);
-				}
-				else if (rand.nextDouble() <= MOUSE_CREATION_PROBABILITY) {
-					Mouse mouse = new  Mouse(true);
-					mouse.setLocation(col, row);
-					animals.add(mouse);
-
-					field.put(mouse, col, row);
-				}
-			}
-		}
-		Collections.shuffle(animals);
-		
 
 	}
 
-	private boolean isViable() {
-		return stats.isViable(field);
-	}
+    public void setGUI(PApplet p) {
+        setGUI(p, 10, 10, p.width - 10, 400);
+    }
 
-	public Field getField() {
-		return this.field;
-	}
+    /**
+     * Run the simulation from its current state for a reasonably long period, e.g.
+     * 500 steps.
+     */
+    public void runLongSimulation() {
+        simulate(500);
+    }
 
-	// Draw field if we have a gui defined
-	public void drawField() {
-		if ((graphicsWindow != null) && (view != null)) {
-			view.drawField(this.field);
-		}
-	}
+    /**
+     * Run the simulation from its current state for the given number of steps. Stop
+     * before the given number of steps if it ceases to be viable.
+     *
+     * @param numSteps The number of steps to run for.
+     */
+    public void simulate(int numSteps) {
+        for (int step = 1; step <= numSteps && isViable(); step++) {
+            simulateOneStep();
+        }
+    }
 
-	public void drawGraph() {
-		graph.draw();
-	}
+    /**
+     * Run the simulation from its current state for a single step. Iterate over the
+     * whole field updating the state of each fox and rabbit.
+     */
+    public void simulateOneStep() {
+        step++;
 
-	public void writeToFile(String writefile) {
-		try {
-			Record r = new Record(animals, this.field, this.step);
-			FileOutputStream outStream = new FileOutputStream(writefile);
-			ObjectOutputStream objectOutputFile = new ObjectOutputStream(outStream);
-			objectOutputFile.writeObject(r);
-			objectOutputFile.close();
-		} catch (Exception e) {
-			System.out.println("Something went wrong: " + e.getMessage());
-		}
-	}
+        // New List to hold newborn rabbits.
+        List<Organism> newAnimals = new ArrayList<Organism>();
 
-	public void readFile(String readfile) {
-		try {
-			FileInputStream inputStream = new FileInputStream(readfile);
-			ObjectInputStream objectInputFile = new ObjectInputStream(inputStream);
-			Record r = (Record) objectInputFile.readObject();
-			setAnimals(r.getAnimals());
-			setField(r.getField());
-			setStep(r.getSteps());
-			objectInputFile.close();
-			// clear field
-		} catch (Exception e) {
-			System.out.println("Something went wrong: " + e.getMessage());
-		}
-	}
+        // Loop through all Rabbits. Let each run around.
+        for (int i = 0; i < organisms.size(); i++) {
+            Organism animal = organisms.get(i);
+            animal.act(field, updatedField, newAnimals);
+            if (!animal.isAlive()) {
+                organisms.remove(i);
+                i--;
+            }
+        }
 
-	private void setStep(int steps) {
-		step = steps;
-	}
+        organisms.addAll(newAnimals);
 
-	private void setField(Field field2) {
-		field = field2;
-	}
+        Field temp = field;
+        field = updatedField;
+        updatedField = temp;
+        updatedField.clear();
 
-	private void setAnimals(List<Organism> animals2) {
-		animals = animals2;
-	}
+        stats.generateCounts(field);
+        updateGraph();
+    }
 
-	// Perform an action when the mouse was clicked.
-	// parameters are the x, y screen coordinates the user clicked on.
-	// Note: you probably want to modify handleMouseClick(Location) which
-	// gives you the location they clicked on in the grid.
-	public void handleMouseClick(float mouseX, float mouseY) {
-		Location loc = view.gridLocationAt(mouseX, mouseY); // get grid at
-		// click.
+    public void updateGraph() {
+        Counter count;
+        for (Counter c : stats.getCounts()) {
+            graph.plotPoint(step, c.getCount(), c.getClassName());
+        }
+    }
 
-		for (int x = loc.getCol() - 8; x < loc.getCol() + 8; x++) {
-			for (int y = loc.getRow() - 8; y < loc.getRow() + 8; y++) {
-				Location locToCheck = new Location(x, y);
-				if (field.isInGrid(locToCheck)) {
-					Object animal = field.getObjectAt(locToCheck);
-					if (animal instanceof Rabbit)
-						animals.remove((Rabbit) animal);
-					if (animal instanceof Fox)
-						animals.remove((Fox) animal);
-					if (animal instanceof Bear)
-						animals.remove((Bear) animal);
-					if (animal instanceof Mouse)
-						animals.remove((Mouse) animal);
-					field.put(null, locToCheck);
-					updatedField.put(null, locToCheck);
-				}
-			}
-		}
-	}
+    public void reset() {
+        step = 0;
+        organisms.clear();
+        field.clear();
+        updatedField.clear();
+        initializeBoard(field);
 
-	private void handleMouseClick(Location l) {
-		System.out.println("Change handleMouseClick in Simulator.java to do something!");
-	}
+        if (graph != null)
+            graph.clear();
 
-	public void handleMouseDrag(int mouseX, int mouseY) {
-		Location loc = this.view.gridLocationAt(mouseX, mouseY); // get grid at
-		// click.
-		if (loc == null)
-			return; // if off the screen, exit
-		handleMouseDrag(loc);
-	}
+        // Show the starting state in the view.
+        // view.showStatus(step, field);
+    }
 
-	private void handleMouseDrag(Location l) {
-		System.out.println("Change handleMouseDrag in Simulator.java to do something!");
-	}
+    /**
+     * Populate a field with foxes and rabbits.
+     *
+     * @param field The field to be populated.
+     */
+    private void initializeBoard(Field field) {
+        Random rand = new Random();
+        field.clear();
+        for (int row = 0; row < field.getHeight(); row++) {
+            for (int col = 0; col < field.getWidth(); col++) {
+                if (rand.nextDouble() <= ANTIBIOTIC_CREATION_PROBABILITY) {
+                    Antibiotic antibiotic = new Antibiotic(true);
+                    antibiotic.setLocation(col, row);
+                    organisms.add(antibiotic);
+                    field.put(antibiotic, col, row);
+                } else if (rand.nextDouble() <= BACTERIA_CREATION_PROBABILITY) {
+                    Bacteria bacteria = new Bacteria(true, false);
+                    bacteria.setLocation(col, row);
+                    organisms.add(bacteria);
+                    field.put(bacteria, col, row);
+                }
+
+            }
+        }
+        Collections.shuffle(organisms);
+
+
+    }
+
+    private boolean isViable() {
+        return stats.isViable(field);
+    }
+
+    public Field getField() {
+        return this.field;
+    }
+
+    // Draw field if we have a gui defined
+    public void drawField() {
+        if ((graphicsWindow != null) && (view != null)) {
+            view.drawField(this.field);
+        }
+    }
+
+    public void drawGraph() {
+        graph.draw();
+    }
+
+    public void writeToFile(String writefile) {
+        try {
+            Record r = new Record(organisms, this.field, this.step);
+            FileOutputStream outStream = new FileOutputStream(writefile);
+            ObjectOutputStream objectOutputFile = new ObjectOutputStream(outStream);
+            objectOutputFile.writeObject(r);
+            objectOutputFile.close();
+        } catch (Exception e) {
+            System.out.println("Something went wrong: " + e.getMessage());
+        }
+    }
+
+    public void readFile(String readfile) {
+        try {
+            FileInputStream inputStream = new FileInputStream(readfile);
+            ObjectInputStream objectInputFile = new ObjectInputStream(inputStream);
+            Record r = (Record) objectInputFile.readObject();
+            setOrganisms(r.getAnimals());
+            setField(r.getField());
+            setStep(r.getSteps());
+            objectInputFile.close();
+            // clear field
+        } catch (Exception e) {
+            System.out.println("Something went wrong: " + e.getMessage());
+        }
+    }
+
+    private void setStep(int steps) {
+        step = steps;
+    }
+
+    private void setField(Field field2) {
+        field = field2;
+    }
+
+    private void setOrganisms(List<Organism> animals2) {
+        organisms = animals2;
+    }
+
+    // Perform an action when the mouse was clicked.
+    // parameters are the x, y screen coordinates the user clicked on.
+    // Note: you probably want to modify handleMouseClick(Location) which
+    // gives you the location they clicked on in the grid.
+    public void handleMouseClick(float mouseX, float mouseY) {
+        Location loc = view.gridLocationAt(mouseX, mouseY); // get grid at
+        // click.
+
+        for (int x = loc.getCol() - 8; x < loc.getCol() + 8; x++) {
+            for (int y = loc.getRow() - 8; y < loc.getRow() + 8; y++) {
+                Location locToCheck = new Location(x, y);
+                if (field.isInGrid(locToCheck)) {
+                    Object animal = field.getObjectAt(locToCheck);
+                    if (animal instanceof Bacteria)
+                        organisms.remove((Bacteria) animal);
+                    if (animal instanceof Antibiotic)
+                        organisms.remove((Antibiotic) animal);
+
+                    field.put(null, locToCheck);
+                    updatedField.put(null, locToCheck);
+                }
+            }
+        }
+    }
+
+    private void handleMouseClick(Location l) {
+        System.out.println("Change handleMouseClick in Simulator.java to do something!");
+    }
+
+    public void handleMouseDrag(int mouseX, int mouseY) {
+        Location loc = this.view.gridLocationAt(mouseX, mouseY); // get grid at
+        // click.
+        if (loc == null)
+            return; // if off the screen, exit
+        handleMouseDrag(loc);
+    }
+
+    private void handleMouseDrag(Location l) {
+        System.out.println("Change handleMouseDrag in Simulator.java to do something!");
+    }
 }
