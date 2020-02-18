@@ -89,21 +89,19 @@ public class Simulator {
         // Create a view of the state of each location in the field.
         view = new FieldDisplay(p, this.field, x, y, display_width, display_height);
         view.setColor(Bacteria.class, p.color(0, 255, 0));
-		view.setColor(Antibiotic.class, p.color(155, 150, 255));
+        view.setColor(Antibiotic.class, p.color(155, 150, 255));
 
 
-
-		graph = new Graph(p, 100, p.height - 30, p.width - 50, p.height - 110, 0, 0, 500,
+        graph = new Graph(p, 100, p.height - 30, p.width - 50, p.height - 110, 0, 0, 500,
                 field.getHeight() * field.getWidth());
         graph.title = "Bacteria Populations";
         graph.xlabel = "Time";
         graph.ylabel = "Pop.\t\t";
         graph.setColor(Bacteria.class, p.color(0, 255, 0));
-		graph.setColor(Antibiotic.class, p.color(155, 150, 255));
+        graph.setColor(Antibiotic.class, p.color(155, 150, 255));
 
 
-
-	}
+    }
 
     public void setGUI(PApplet p) {
         setGUI(p, 10, 10, p.width - 10, 400);
@@ -136,6 +134,7 @@ public class Simulator {
     public void simulateOneStep() {
         step++;
 
+        calculatePercentageBacteria(updatedField);
         // New List to hold newborn rabbits.
         List<Organism> newAnimals = new ArrayList<Organism>();
 
@@ -158,6 +157,26 @@ public class Simulator {
 
         stats.generateCounts(field);
         updateGraph();
+    }
+
+    private void calculatePercentageBacteria(Field updatedField) {
+        int numOfBacteria = 0;
+        int numOfEBacteria = 0;
+        Object[][] frame = updatedField.getBoard();
+
+        for (int i = 0; i < 60; i++) {
+            for (int j = 0; j < 60; j++) {
+                if (frame[i][j] == Bacteria.class) {
+                    numOfBacteria++;
+                    Bacteria bacteria = (Bacteria) (updatedField.getObjectAt(j, i));
+                    if (bacteria.isResistant == true) numOfEBacteria++;
+                }
+            }
+        }
+
+        System.out.println("% of screen taken up by bacteria - " + (numOfBacteria/6400));
+        System.out.println("% of bacteria that is evolved - " + (numOfEBacteria/(1+numOfBacteria)));
+
     }
 
     public void updateGraph() {
@@ -196,8 +215,7 @@ public class Simulator {
                     antibiotic.setLocation(col, row);
                     organisms.add(antibiotic);
                     field.put(antibiotic, col, row);
-                }
-                else if (rand.nextDouble() <= BACTERIA_CREATION_PROBABILITY) {
+                } else if (rand.nextDouble() <= BACTERIA_CREATION_PROBABILITY) {
                     Bacteria bacteria = new Bacteria(true, false);
                     bacteria.setLocation(col, row);
                     organisms.add(bacteria);

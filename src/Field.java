@@ -23,7 +23,7 @@ public class Field implements Serializable {
 	private int height, width;
 
 	// Storage for the items on the board.
-	private Object[][] board;
+	public Object[][] board;
 
 	private HashMap<Class, ArrayList<Location>> animals;
 
@@ -82,11 +82,15 @@ public class Field implements Serializable {
 		}
 	}
 
+	public Object[][] getBoard(){
+		return board;
+	}
+
 	/**
 	 * Place an animal at the given location. If there is already an animal at
 	 * the location it will be lost.
 	 * 
-	 * @param animal
+	 * @param organism
 	 *            The animal to be placed.
 	 * @param row
 	 *            Row coordinate of the location.
