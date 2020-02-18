@@ -25,7 +25,7 @@ public class Simulator {
     private static final int DEFAULT_HEIGHT = 80;
 
     private static final double ANTIBIOTIC_CREATION_PROBABILITY = 0.01;
-    private static final double BACTERIA_CREATION_PROBABILITY = 0.001;
+    private static final double BACTERIA_CREATION_PROBABILITY = 0.02;
 
 
     // Lists of animals in the field. Separate lists are kept for ease of
