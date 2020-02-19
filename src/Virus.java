@@ -7,8 +7,8 @@ public class Virus extends Organism implements Serializable {
     public Virus(boolean randomAge) {
         super();
         BREEDING_AGE = 0;
-        MAX_AGE = 12;
-        BREEDING_PROBABILITY = 0.1;
+        MAX_AGE = 20;
+        BREEDING_PROBABILITY = 0.2;
         LITTER_SIZE = 1;
 
         rand = new Random();
@@ -28,11 +28,14 @@ public class Virus extends Organism implements Serializable {
             // New foxes are born into adjacent locations.
             int births = breed();
             for (int b = 0; b < births; b++) {
-                Virus newVirus = new Virus(false);
-                newViruses.add(newVirus);
-                Location loc = updatedField.randomAdjacentLocation(location);
-                newVirus.setLocation(loc);
-                updatedField.put(newVirus, loc);
+                Location newLocation = findFood(currentField, location);
+                if(newLocation != null){
+                    Virus newVirus = new Virus(false);
+                    newViruses.add(newVirus);
+                    Location loc = updatedField.randomAdjacentLocation(location);
+                    newVirus.setLocation(loc);
+                    updatedField.put(newVirus, loc);
+                }
             }
             // Move towards the source of food if found.
             Location newLocation = findFood(currentField, location);
