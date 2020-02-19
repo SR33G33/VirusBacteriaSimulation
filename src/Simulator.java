@@ -180,7 +180,7 @@ public class Simulator {
         }
 
         if(numOfBacteria>0) {
-            System.out.println("% of screen taken up by bacteria - " + 100*((double)numOfBacteria / 3600));
+            System.out.println("% of screen taken up by bacteria - " + 100*((double)numOfBacteria / 6400));
             System.out.println("% of bacteria that is evolved - " + 100*((double)numOfEBacteria / (numOfBacteria)));
         }
         else{

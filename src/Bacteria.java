@@ -29,8 +29,12 @@ public class Bacteria extends Organism implements Serializable {
         if (alive) {
             int births = breed();
             for (int b = 0; b < births; b++) {
-                if (Main.hoursPassed > 0 && (int) (Math.random() * 100) < 5) {
+                if ((int)(Math.random() * 100) < 5) {
                     Bacteria newBacteria = new Bacteria(false, true);
+                    newBacterium.add(newBacteria);
+                    Location loc = updatedField.randomAdjacentLocation(location);
+                    newBacteria.setLocation(loc);
+                    updatedField.put(newBacteria, loc);
                 }
                 Bacteria newBacteria = new Bacteria(false, false);
                 newBacterium.add(newBacteria);
