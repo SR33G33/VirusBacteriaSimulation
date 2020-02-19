@@ -11,7 +11,7 @@ public class Bacteria extends Organism implements Serializable {
         super();
         BREEDING_AGE = 0;
         MAX_AGE = 5;
-        BREEDING_PROBABILITY = 0.22;
+        BREEDING_PROBABILITY = 0.3;
         LITTER_SIZE = 1;
         rand = new Random();
         this.isResistant = isResistant;
