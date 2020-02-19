@@ -28,6 +28,8 @@ public class Simulator {
     private static final double BACTERIA_CREATION_PROBABILITY = 0.02;
 
 
+
+
     // Lists of animals in the field. Separate lists are kept for ease of
     // iteration.
     List<Organism> organisms;
@@ -134,7 +136,8 @@ public class Simulator {
     public void simulateOneStep() {
         step++;
 
-        calculatePercentageBacteria(updatedField);
+        calculatePercentageBacteria();
+
         // New List to hold newborn rabbits.
         List<Organism> newAnimals = new ArrayList<Organism>();
 
@@ -153,30 +156,38 @@ public class Simulator {
         Field temp = field;
         field = updatedField;
         updatedField = temp;
+
+
+
         updatedField.clear();
 
         stats.generateCounts(field);
         updateGraph();
     }
 
-    private void calculatePercentageBacteria(Field updatedField) {
+    private void calculatePercentageBacteria() {
+
         int numOfBacteria = 0;
         int numOfEBacteria = 0;
-        Object[][] frame = updatedField.getBoard();
 
-        for (int i = 0; i < 60; i++) {
-            for (int j = 0; j < 60; j++) {
-                if (frame[i][j] == Bacteria.class) {
-                    numOfBacteria++;
-                    Bacteria bacteria = (Bacteria) (updatedField.getObjectAt(j, i));
-                    if (bacteria.isResistant == true) numOfEBacteria++;
-                }
+        for (int i = 0; i < organisms.size(); i++) {
+            if (organisms.get(i).getClass().equals(Bacteria.class)) {
+                numOfBacteria++;
+                Bacteria bacteria = (Bacteria)(organisms.get(i));
+                if (bacteria.isResistant == true) numOfEBacteria++;
             }
+
         }
 
-        System.out.println("% of screen taken up by bacteria - " + (numOfBacteria/6400));
-        System.out.println("% of bacteria that is evolved - " + (numOfEBacteria/(1+numOfBacteria)));
+        if(numOfBacteria>0) {
+            System.out.println("% of screen taken up by bacteria - " + 100*((double)numOfBacteria / 3600));
+            System.out.println("% of bacteria that is evolved - " + 100*((double)numOfEBacteria / (numOfBacteria)));
+        }
+        else{
+            System.out.println("% of screen taken up by bacteria - 0");
+            System.out.println("% of bacteria that is evolved - 0");
 
+        }
     }
 
     public void updateGraph() {
