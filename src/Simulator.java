@@ -24,8 +24,8 @@ public class Simulator {
     // The default height of the grid.
     private static final int DEFAULT_HEIGHT = 80;
 
-    private static final double ANTIBIOTIC_CREATION_PROBABILITY = 0.01;
-    private static final double BACTERIA_CREATION_PROBABILITY = 0.02;
+    private static final double VIRUS_CREATION_PROBABILITY = 0.01;
+    private static final double BACTERIA_CREATION_PROBABILITY = 0.5;
 
 
 
@@ -91,7 +91,7 @@ public class Simulator {
         // Create a view of the state of each location in the field.
         view = new FieldDisplay(p, this.field, x, y, display_width, display_height);
         view.setColor(Bacteria.class, p.color(0, 255, 0));
-        view.setColor(Antibiotic.class, p.color(155, 150, 255));
+        view.setColor(Virus.class, p.color(155, 150, 255));
 
 
         graph = new Graph(p, 100, p.height - 30, p.width - 50, p.height - 110, 0, 0, 500,
@@ -100,7 +100,7 @@ public class Simulator {
         graph.xlabel = "Time";
         graph.ylabel = "Pop.\t\t";
         graph.setColor(Bacteria.class, p.color(0, 255, 0));
-        graph.setColor(Antibiotic.class, p.color(155, 150, 255));
+        graph.setColor(Virus.class, p.color(155, 150, 255));
 
 
     }
@@ -221,11 +221,11 @@ public class Simulator {
         field.clear();
         for (int row = 0; row < field.getHeight(); row++) {
             for (int col = 0; col < field.getWidth(); col++) {
-                if (rand.nextDouble() <= ANTIBIOTIC_CREATION_PROBABILITY) {
-                    Antibiotic antibiotic = new Antibiotic(true);
-                    antibiotic.setLocation(col, row);
-                    organisms.add(antibiotic);
-                    field.put(antibiotic, col, row);
+                if (rand.nextDouble() <= VIRUS_CREATION_PROBABILITY) {
+                    Virus virus = new Virus(true);
+                    virus.setLocation(col, row);
+                    organisms.add(virus);
+                    field.put(virus, col, row);
                 } else if (rand.nextDouble() <= BACTERIA_CREATION_PROBABILITY) {
                     Bacteria bacteria = new Bacteria(true, false);
                     bacteria.setLocation(col, row);
@@ -313,8 +313,8 @@ public class Simulator {
                     Object animal = field.getObjectAt(locToCheck);
                     if (animal instanceof Bacteria)
                         organisms.remove((Bacteria) animal);
-                    if (animal instanceof Antibiotic)
-                        organisms.remove((Antibiotic) animal);
+                    if (animal instanceof Virus)
+                        organisms.remove((Virus) animal);
 
                     field.put(null, locToCheck);
                     updatedField.put(null, locToCheck);

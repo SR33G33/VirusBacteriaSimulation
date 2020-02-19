@@ -7,8 +7,8 @@ public class Virus extends Organism implements Serializable {
     public Virus(boolean randomAge) {
         super();
         BREEDING_AGE = 0;
-        MAX_AGE = Integer.MAX_VALUE;
-        BREEDING_PROBABILITY = 0.9;
+        MAX_AGE = 12;
+        BREEDING_PROBABILITY = 0.1;
         LITTER_SIZE = 1;
 
         rand = new Random();
