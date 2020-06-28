@@ -24,10 +24,10 @@ public class Simulator {
     // The default height of the grid.
     private static final int DEFAULT_HEIGHT = 80;
 
-    private static final double VIRUS_CREATION_PROBABILITY = 0.01;
-    private static final double BACTERIA_CREATION_PROBABILITY = 0.5;
+    private static final double VIRUS_CREATION_PROBABILITY = 0.00;
+    private static final double BACTERIA_CREATION_PROBABILITY = 0.01;
 
-
+    public static double bacteriaProb = 0;
 
 
     // Lists of animals in the field. Separate lists are kept for ease of
@@ -165,11 +165,13 @@ public class Simulator {
         updateGraph();
     }
 
+    public static double getBacteriaProb(){
+        return bacteriaProb;
+    }
     private void calculatePercentageBacteria() {
 
         int numOfBacteria = 0;
         int numOfEBacteria = 0;
-
         for (int i = 0; i < organisms.size(); i++) {
             if (organisms.get(i).getClass().equals(Bacteria.class)) {
                 numOfBacteria++;
@@ -180,12 +182,16 @@ public class Simulator {
         }
 
         if(numOfBacteria>0) {
-            System.out.println("% of screen taken up by bacteria - " + 100*((double)numOfBacteria / 6400));
-            System.out.println("% of bacteria that is evolved - " + 100*((double)numOfEBacteria / (numOfBacteria)));
+//            System.out.println("% of screen taken up by bacteria - " + 100*((double)numOfBacteria / 6400));
+//            System.out.println("% of bacteria that is evolved - " + 100*((double)numOfEBacteria / (numOfBacteria)));
+            bacteriaProb = 100*((double)numOfBacteria / 6400);
+
         }
         else{
-            System.out.println("% of screen taken up by bacteria - 0");
-            System.out.println("% of bacteria that is evolved - 0");
+//            System.out.println("% of screen taken up by bacteria - 0");
+//            System.out.println("% of bacteria that is evolved - 0");
+
+            System.out.println("0,0");
 
         }
     }

@@ -13,6 +13,8 @@ public class Main extends PApplet {
 
 		this.simulator = new Simulator(80, 60);
 		this.simulator.setGUI(this);
+		System.out.println("Number of Hours, Percentage of Bacteria");
+
 	}
 
 	@Override
@@ -21,7 +23,7 @@ public class Main extends PApplet {
 		if (!paused) {
 			simulator.simulateOneStep();
 			hoursPassed++;
-			System.out.println(hoursPassed);
+			System.out.println(hoursPassed+","+Simulator.getBacteriaProb());
 
 		}
 		simulator.drawField();
