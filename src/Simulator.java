@@ -1,13 +1,13 @@
-import java.util.Random;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
+import processing.core.PApplet;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import processing.core.PApplet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 /**
  * A simple predator-prey simulator, based on a field containing rabbits and
@@ -24,10 +24,12 @@ public class Simulator {
     // The default height of the grid.
     private static final int DEFAULT_HEIGHT = 80;
 
-    private static final double VIRUS_CREATION_PROBABILITY = 0.00;
+    private static final double VIRUS_CREATION_PROBABILITY = 0.01;
     private static final double BACTERIA_CREATION_PROBABILITY = 0.01;
 
     public static double bacteriaProb = 0;
+    public static double virusProb = 0;
+    public static double antibioticProb = 0;
 
 
     // Lists of animals in the field. Separate lists are kept for ease of
@@ -137,6 +139,8 @@ public class Simulator {
         step++;
 
         calculatePercentageBacteria();
+        calculatePercentageAntibiotic();
+        calculatePercentageVirus();
 
         // New List to hold newborn rabbits.
         List<Organism> newAnimals = new ArrayList<Organism>();
@@ -158,16 +162,16 @@ public class Simulator {
         updatedField = temp;
 
 
-
         updatedField.clear();
 
         stats.generateCounts(field);
         updateGraph();
     }
 
-    public static double getBacteriaProb(){
+    public static double getBacteriaProb() {
         return bacteriaProb;
     }
+
     private void calculatePercentageBacteria() {
 
         int numOfBacteria = 0;
@@ -175,26 +179,68 @@ public class Simulator {
         for (int i = 0; i < organisms.size(); i++) {
             if (organisms.get(i).getClass().equals(Bacteria.class)) {
                 numOfBacteria++;
-                Bacteria bacteria = (Bacteria)(organisms.get(i));
+                Bacteria bacteria = (Bacteria) (organisms.get(i));
                 if (bacteria.isResistant == true) numOfEBacteria++;
             }
 
         }
 
-        if(numOfBacteria>0) {
+        if (numOfBacteria > 0) {
 //            System.out.println("% of screen taken up by bacteria - " + 100*((double)numOfBacteria / 6400));
 //            System.out.println("% of bacteria that is evolved - " + 100*((double)numOfEBacteria / (numOfBacteria)));
-            bacteriaProb = 100*((double)numOfBacteria / 6400);
+            bacteriaProb = 100 * ((double) numOfBacteria / 6400);
 
-        }
-        else{
+        } else {
 //            System.out.println("% of screen taken up by bacteria - 0");
 //            System.out.println("% of bacteria that is evolved - 0");
 
-            System.out.println("0,0");
+//            System.out.println("0,0");
+            bacteriaProb = 0;
 
         }
     }
+
+    private void calculatePercentageVirus() {
+
+        int numOfVirus = 0;
+        for (int i = 0; i < organisms.size(); i++) {
+            if (organisms.get(i).getClass().equals(Virus.class)) {
+                numOfVirus++;
+                Virus virus = (Virus) (organisms.get(i));
+            }
+
+        }
+
+        if (numOfVirus > 0) {
+            virusProb = 100 * ((double) numOfVirus / 6400);
+
+        } else {
+
+            virusProb = 0;
+
+        }
+    }
+
+    private void calculatePercentageAntibiotic() {
+
+        int numOfAntibiotic = 0;
+        for (int i = 0; i < organisms.size(); i++) {
+            if (organisms.get(i).getClass().equals(Antibiotic.class)) {
+                numOfAntibiotic++;
+                Antibiotic antibiotic = (Antibiotic) (organisms.get(i));
+            }
+
+        }
+
+        if (numOfAntibiotic > 0) {
+            antibioticProb = 100 * ((double) numOfAntibiotic / 6400);
+
+        } else {
+            antibioticProb = 0;
+
+        }
+    }
+
 
     public void updateGraph() {
         Counter count;
