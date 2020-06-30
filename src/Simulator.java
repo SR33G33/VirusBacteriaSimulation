@@ -26,6 +26,8 @@ public class Simulator {
 
     private static final double VIRUS_CREATION_PROBABILITY = 0.01;
     private static final double BACTERIA_CREATION_PROBABILITY = 0.01;
+    private static final double ANTIBIOTIC_CREATION_PROBABILITY = 0.01;
+
 
     public static double bacteriaProb = 0;
     public static double virusProb = 0;
@@ -94,6 +96,7 @@ public class Simulator {
         view = new FieldDisplay(p, this.field, x, y, display_width, display_height);
         view.setColor(Bacteria.class, p.color(0, 255, 0));
         view.setColor(Virus.class, p.color(155, 150, 255));
+        view.setColor(Antibiotic.class, p.color(255, 0, 0));
 
 
         graph = new Graph(p, 100, p.height - 30, p.width - 50, p.height - 110, 0, 0, 500,
@@ -103,6 +106,7 @@ public class Simulator {
         graph.ylabel = "Pop.\t\t";
         graph.setColor(Bacteria.class, p.color(0, 255, 0));
         graph.setColor(Virus.class, p.color(155, 150, 255));
+        graph.setColor(Antibiotic.class, p.color(255, 0, 0));
 
 
     }
@@ -283,7 +287,12 @@ public class Simulator {
                     bacteria.setLocation(col, row);
                     organisms.add(bacteria);
                     field.put(bacteria, col, row);
-                }
+                } else if (rand.nextDouble() <= ANTIBIOTIC_CREATION_PROBABILITY) {
+                Antibiotic antibiotic = new Antibiotic(true);
+                antibiotic.setLocation(col, row);
+                organisms.add(antibiotic);
+                field.put(antibiotic, col, row);
+            }
 
             }
         }
