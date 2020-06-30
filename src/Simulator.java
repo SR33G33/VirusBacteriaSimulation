@@ -33,6 +33,7 @@ public class Simulator {
 
     // DO NOT TOUCH THESE VALS
     public static double bacteriaProb = 0;
+    public static double eBacteriaProb = 0;
     public static double virusProb = 0;
     public static double antibioticProb = 0;
 
@@ -196,6 +197,7 @@ public class Simulator {
 //            System.out.println("% of screen taken up by bacteria - " + 100*((double)numOfBacteria / 6400));
 //            System.out.println("% of bacteria that is evolved - " + 100*((double)numOfEBacteria / (numOfBacteria)));
             bacteriaProb = 100 * ((double) numOfBacteria / 6400);
+            eBacteriaProb = 100 * ((double) numOfEBacteria / 6400);
 
         } else {
 //            System.out.println("% of screen taken up by bacteria - 0");
@@ -203,6 +205,7 @@ public class Simulator {
 
 //            System.out.println("0,0");
             bacteriaProb = 0;
+            eBacteriaProb = 0;
 
         }
     }

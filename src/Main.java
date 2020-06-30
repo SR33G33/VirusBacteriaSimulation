@@ -13,7 +13,7 @@ public class Main extends PApplet {
 
 		this.simulator = new Simulator(80, 60);
 		this.simulator.setGUI(this);
-		System.out.println("NumHoursPassed, PercentageBacteria, PercentageAntibiotic, PercentageVirus");
+		System.out.println("NumHoursPassed, PercentageBacteria, PercentageEvolvedBacteria PercentageAntibiotic, PercentageVirus");
 
 	}
 
@@ -23,7 +23,7 @@ public class Main extends PApplet {
 		if (!paused) {
 			simulator.simulateOneStep();
 			hoursPassed++;
-			System.out.println(hoursPassed+","+Simulator.bacteriaProb+","+Simulator.antibioticProb+","+Simulator.virusProb);
+			System.out.println(hoursPassed+","+Simulator.bacteriaProb+","+Simulator.eBacteriaProb+","+Simulator.antibioticProb+","+Simulator.virusProb);
 
 		}
 		simulator.drawField();
