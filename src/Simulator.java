@@ -24,11 +24,14 @@ public class Simulator {
     // The default height of the grid.
     private static final int DEFAULT_HEIGHT = 80;
 
+
+    // Edit Creation Probabilities to change the initial starting concentrations of bacteria, virus and antibiotic
     private static final double VIRUS_CREATION_PROBABILITY = 0.01;
     private static final double BACTERIA_CREATION_PROBABILITY = 0.01;
     private static final double ANTIBIOTIC_CREATION_PROBABILITY = 0.01;
 
 
+    // DO NOT TOUCH THESE VALS
     public static double bacteriaProb = 0;
     public static double virusProb = 0;
     public static double antibioticProb = 0;
